@@ -59,7 +59,6 @@ const getFiles = async (req, res) => {
   }
 };
 
-// Controller untuk mendapatkan file berdasarkan ID
 const getFileById = async (req, res) => {
   try {
     const { fileId } = req.params;
@@ -84,6 +83,23 @@ const getFileById = async (req, res) => {
   }
 };
 
-module.exports = { addFiles, getFiles, getFileById };
+const deleteFile = async (req, res) => {
+  try {
+    const { fileId } = req.params;
 
-// Menyisipkan logika penyimpanan ke firestore
+    if (!fileId) {
+      return res.status(400).json({ error: 'File ID is required' });
+    }
+
+    await collectionsRef.doc(fileId).delete();
+
+    res.json({ message: 'File successfully deleted' });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ error: 'An error occurred while deleting the file' });
+  }
+};
+
+module.exports = { addFiles, getFiles, getFileById, deleteFile };
