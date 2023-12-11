@@ -1,3 +1,4 @@
-key.json
+firebaseKey.json
+storageKey.json
 .env
 node_modules
