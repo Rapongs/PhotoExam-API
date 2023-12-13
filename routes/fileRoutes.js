@@ -7,12 +7,13 @@ const {
   getFileById,
   deleteFile,
 } = require('../controllers/fileControllers');
+const { verifyToken } = require('../db/firebase');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/files', upload.array('documents', 2), addFiles);
-router.get('/files', getFiles);
-router.get('/files/:fileId', getFileById);
-router.delete('/files/:fileId', deleteFile);
+router.post('/files', verifyToken, upload.array('documents', 2), addFiles);
+router.get('/files', verifyToken, getFiles);
+router.get('/files/:fileId', verifyToken, getFileById);
+router.delete('/files/:fileId', verifyToken, deleteFile);
 
 module.exports = router;

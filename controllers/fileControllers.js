@@ -1,10 +1,11 @@
-const { collectionsRef } = require('../db/firebase');
+const { usersRef } = require('../db/firebase');
 const { v4: uuidv4 } = require('uuid');
 const { bucket } = require('../db/cloudStorage');
 
 const addFiles = async (req, res) => {
   try {
     const uploadedFile = req.files;
+    const documentId = req.user.uid;
     if (!uploadedFile || uploadedFile.length === 0) {
       return res.status(400).json({ error: 'File not Found' });
     }
@@ -26,14 +27,18 @@ const addFiles = async (req, res) => {
         createdAt: new Date(),
       };
 
-      await collectionsRef.doc(fileId).set(fileData);
+      await usersRef
+        .doc(documentId)
+        .collection('files')
+        .doc(fileId)
+        .set(fileData);
 
       uploadedData.push(fileData);
     }
 
     res.json({
       message: 'Document successfully uploaded',
-      document: uploadedData,
+      data: uploadedData,
     });
   } catch (err) {
     console.log(err);
@@ -45,14 +50,22 @@ const addFiles = async (req, res) => {
 
 const getFiles = async (req, res) => {
   try {
-    const querySnapshot = await collectionsRef.get();
-    const files = [];
+    const documentId = req.user.uid;
 
+    const querySnapshot = await usersRef
+      .doc(documentId)
+      .collection('files')
+      .get();
+
+    const files = [];
     querySnapshot.forEach((doc) => {
       files.push(doc.data());
     });
 
-    res.json({ files });
+    res.json({
+      message: 'Files successfully retrieved',
+      data: files,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: 'An error occurred while fetching files' });
@@ -61,20 +74,25 @@ const getFiles = async (req, res) => {
 
 const getFileById = async (req, res) => {
   try {
-    const { fileId } = req.params;
+    const documentId = req.user.uid;
+    const fileId = req.params.fileId;
 
-    if (!fileId) {
-      return res.status(400).json({ error: 'File ID is required' });
-    }
+    const fileDoc = await usersRef
+      .doc(documentId)
+      .collection('files')
+      .doc(fileId)
+      .get();
 
-    const docSnapshot = await collectionsRef.doc(fileId).get();
-
-    if (!docSnapshot.exists) {
+    if (!fileDoc.exists) {
       return res.status(404).json({ error: 'File not found' });
     }
 
-    const fileData = docSnapshot.data();
-    res.json({ file: fileData });
+    const fileData = fileDoc.data();
+
+    res.json({
+      message: 'File successfully retrieved',
+      data: fileData,
+    });
   } catch (err) {
     console.log(err);
     res
@@ -85,17 +103,33 @@ const getFileById = async (req, res) => {
 
 const deleteFile = async (req, res) => {
   try {
-    const { fileId } = req.params;
+    const documentId = req.user.uid;
+    const fileId = req.params.fileId;
 
-    if (!fileId) {
-      return res.status(400).json({ error: 'File ID is required' });
+    // Periksa apakah file ada sebelum dihapus
+    const fileDoc = await usersRef
+      .doc(documentId)
+      .collection('files')
+      .doc(fileId)
+      .get();
+
+    if (!fileDoc.exists) {
+      return res.status(404).json({ error: 'File not found' });
     }
 
-    await collectionsRef.doc(fileId).delete();
+    // Hapus file dari storage
+    const fileName = `${fileId}_${fileDoc.data().fileName}`;
+    const storageFile = bucket.file(fileName);
+    await storageFile.delete();
 
-    res.json({ message: 'File successfully deleted' });
+    // Hapus file dari Firestore
+    await usersRef.doc(documentId).collection('files').doc(fileId).delete();
+
+    res.json({
+      message: 'File successfully deleted',
+    });
   } catch (err) {
-    console.error(err);
+    console.log(err);
     res
       .status(500)
       .json({ error: 'An error occurred while deleting the file' });

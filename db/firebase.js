@@ -1,5 +1,5 @@
-const { initializeApp, cert } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
+const admin = require('firebase-admin');
+const firebase = require('firebase');
 const serviceAccount = require('./firebaseKey.json');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -13,12 +13,26 @@ const firebaseConfig = {
   appId: '1:609493449218:web:c13bf48330869fb23e051b',
 };
 
-initializeApp({
-  credential: cert(serviceAccount),
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
 });
 
-const db = getFirestore();
-const usersRef = db.collection('users');
-const collectionsRef = db.collection('files');
+firebase.initializeApp(firebaseConfig);
 
-module.exports = { db, usersRef, collectionsRef };
+const db = admin.firestore();
+const auth = admin.auth();
+const usersRef = db.collection('users');
+
+const verifyToken = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    const decodedToken = await auth.verifyIdToken(token);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(401).send('Unauthorized');
+  }
+};
+
+module.exports = { admin, firebase, db, usersRef, verifyToken };
