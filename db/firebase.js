@@ -1,9 +1,10 @@
 const admin = require('firebase-admin');
 const firebase = require('firebase');
-const serviceAccount = require('./firebaseKey.json');
+const serviceAccount = require('./firebaseKey.json'); //dirubah sesuai lokasi penyimpanan service account .json
 const dotenv = require('dotenv');
 dotenv.config();
 
+// firebaseConfig dirubah sesuai akun firebase
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   authDomain: 'photo-exam.firebaseapp.com',
@@ -35,4 +36,4 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = { admin, firebase, db, usersRef, verifyToken };
+module.exports = { admin, firebase, db, usersRef, verifyToken, auth };
