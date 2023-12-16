@@ -1,5 +1,4 @@
 const { usersRef } = require('../db/firebase');
-const { usersRef } = require('../db/firebase');
 const { v4: uuidv4 } = require('uuid');
 const { bucket } = require('../db/cloudStorage');
 
