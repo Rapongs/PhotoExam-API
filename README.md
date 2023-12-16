@@ -86,7 +86,11 @@ Header :
 
 Request Body :
 
-- Input image files (max: 3)
+```json
+{
+  "documents": req.files
+}
+```
 
 Response Body Success :
 
@@ -166,8 +170,8 @@ Response Body Error :
 ```json
 {
   "error": {
-      "code": "500",
-      "message": "Terjadi kesalahan saat mengambil file"
+    "code": "500",
+    "message": "Terjadi kesalahan saat mengambil file"
   }
 }
 ```
