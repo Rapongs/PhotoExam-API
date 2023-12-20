@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:18
 
 # Set the working directory to /app
 WORKDIR /app
@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Expose port 3000
-EXPOSE 8080
+EXPOSE 3000
 
 # Start the server
 CMD ["npm", "start"]
