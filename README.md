@@ -17,12 +17,7 @@ Response Body Success :
 
 ```json
 {
-  "message": "Pendaftaran Akun Berhasil",
-  "data": {
-    "uid": "example ID",
-    "email": "example@email.com",
-    "createdAt": "example-date"
-  }
+  "message": "Pendaftaran Akun Berhasil"
 }
 ```
 
@@ -58,7 +53,9 @@ Response Body Success :
 {
   "message": "Berhasil Login",
   "data": {
-    "token": "user-token"
+    "token": "user-token",
+    "userId": "user id",
+    "email": "example@email.com"
   }
 }
 ```
@@ -88,7 +85,10 @@ Request Body :
 
 ```json
 {
-  "documents": req.files
+  "documents": req.files,
+  "description": "lorem ipsum",
+  "studentName": "lorem",
+  "answerKey": "lorem ipsum dolor"
 }
 ```
 
@@ -96,23 +96,7 @@ Response Body Success :
 
 ```json
 {
-  "message": "Berhasil upload",
-  "data": [
-    {
-      "fileId": "file-id",
-      "fileName": "file-name",
-      "fileType": "file-type",
-      "storageUrl": "file-url",
-      "createdAt": "date"
-    },
-    {
-      "fileId": "file-id",
-      "fileName": "file-name",
-      "fileType": "file-type",
-      "storageUrl": "file-url",
-      "createdAt": "date"
-    }
-  ]
+  "message": "Berhasil upload"
 }
 ```
 
@@ -150,16 +134,24 @@ Response Body Success :
     {
       "fileId": "file-id",
       "fileName": "file-name",
-      "fileType": "file-type",
       "storageUrl": "file-url",
-      "createdAt": "date"
+      "createdAt": "date",
+      "description": "lorem ipsum",
+      "studentName": "lorem",
+      "studentAnswer": "lorem ipsum dolor sit amet",
+      "keyAnswer": "lorem ipsum dolor",
+      "score": 1
     },
     {
       "fileId": "file-id",
       "fileName": "file-name",
-      "fileType": "file-type",
       "storageUrl": "file-url",
-      "createdAt": "date"
+      "createdAt": "date",
+      "description": "lorem ipsum",
+      "studentName": "lorem",
+      "studentAnswer": "lorem ipsum dolor sit amet",
+      "keyAnswer": "lorem ipsum dolor",
+      "score": 1
     }
   ]
 }
@@ -192,9 +184,13 @@ Response Body Success :
   "data": {
     "fileId": "file-id",
     "fileName": "file-name",
-    "fileType": "file-type",
     "storageUrl": "file-url",
-    "createdAt": "date"
+    "createdAt": "date",
+    "description": "lorem ipsum",
+    "studentName": "lorem",
+    "studentAnswer": "lorem ipsum dolor sit amet",
+    "keyAnswer": "lorem ipsum dolor",
+    "score": 1
   }
 }
 ```
